@@ -74,9 +74,10 @@ df_train.insert(2, "Age", ser)
 ser = data_proc_fare(df_train["Fare"])
 df_train = df_train.drop("Fare", axis=1)
 df_train.insert(2, "Fare", ser)
-#print (df_train["Fare"])
 
 
-#df_train = df_train[["Survived", "Pclass", "Sex", "Age", "SibSp", "Parch", "Ticket", "Fare", "Cabin", "Embarked"]]
+df_train = df_train[["Survived", "Pclass", "Sex", "Age", "SibSp", "Parch", "Fare", "Cabin", "Embarked"]]
+df_train.to_csv("train_upd.csv", ";")
+
 #print(df_train[['Pclass', 'Survived']].groupby(['Pclass']).mean().sort_values(by='Survived', ascending=False))
 #print(df_train[['Sex', 'Survived']].groupby(['Sex']).mean().sort_values(by='Survived', ascending=False))
