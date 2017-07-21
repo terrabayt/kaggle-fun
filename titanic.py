@@ -75,15 +75,30 @@ ser = data_proc_fare(df_train["Fare"])
 df_train = df_train.drop("Fare", axis=1)
 df_train.insert(2, "Fare", ser)
 
+df_test = df_test.assign(Cabin=data_proc_cabin(df_train["Cabin"]))
+ser = data_proc_age(df_test["Age"])
+df_test = df_test.drop("Age", axis=1)
+df_test.insert(2, "Age", ser)
+ser = data_proc_fare(df_test["Fare"])
+df_test = df_test.drop("Fare", axis=1)
+df_test.insert(2, "Fare", ser)
 
+series_train = df_train["Survived"]
 df_train = df_train[["Survived", "Pclass", "Sex", "Age", "SibSp", "Parch", "Fare", "Cabin", "Embarked"]]
 df_train.to_csv("train_upd.csv", ";")
+df_test = df_test[["Pclass", "Sex", "Age", "SibSp", "Parch", "Fare", "Cabin", "Embarked"]]
 
-print(df_train[['Pclass', 'Survived']].groupby(['Pclass']).mean().sort_values(by='Survived', ascending=False))
-print(df_train[['Sex', 'Survived']].groupby(['Sex']).mean().sort_values(by='Survived', ascending=False))
-print(df_train[['Age', 'Survived']].groupby(['Age']).mean().sort_values(by='Survived', ascending=False))
-print(df_train[['SibSp', 'Survived']].groupby(['SibSp']).mean().sort_values(by='Survived', ascending=False))
-print(df_train[['Parch', 'Survived']].groupby(['Parch']).mean().sort_values(by='Survived', ascending=False))
-print(df_train[['Fare', 'Survived']].groupby(['Fare']).mean().sort_values(by='Survived', ascending=False))
-print(df_train[['Cabin', 'Survived']].groupby(['Cabin']).mean().sort_values(by='Survived', ascending=False))
-print(df_train[['Embarked', 'Survived']].groupby(['Embarked']).mean().sort_values(by='Survived', ascending=False))
+# clf = SVC()
+# clf.fit(df_train, series_train)
+# series_test = clf.predict(df_test)
+# df_test.insert(2, "Survived", series_test)
+# df_test.to_csv("test_upd.csv", ";")
+
+# print(df_train[['Pclass', 'Survived']].groupby(['Pclass']).mean().sort_values(by='Survived', ascending=False))
+# print(df_train[['Sex', 'Survived']].groupby(['Sex']).mean().sort_values(by='Survived', ascending=False))
+# print(df_train[['Age', 'Survived']].groupby(['Age']).mean().sort_values(by='Survived', ascending=False))
+# print(df_train[['SibSp', 'Survived']].groupby(['SibSp']).mean().sort_values(by='Survived', ascending=False))
+# print(df_train[['Parch', 'Survived']].groupby(['Parch']).mean().sort_values(by='Survived', ascending=False))
+# print(df_train[['Fare', 'Survived']].groupby(['Fare']).mean().sort_values(by='Survived', ascending=False))
+# print(df_train[['Cabin', 'Survived']].groupby(['Cabin']).mean().sort_values(by='Survived', ascending=False))
+# print(df_train[['Embarked', 'Survived']].groupby(['Embarked']).mean().sort_values(by='Survived', ascending=False))
