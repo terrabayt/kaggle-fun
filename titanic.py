@@ -1,6 +1,7 @@
 # data analysis and wrangling
 import pandas as pd
 import numpy as np
+
 import random as rnd
 import math
 import xgboost as xgb
@@ -39,12 +40,10 @@ def age_groups(value):
         return 1
     if value >= 19 and value < 30:
         return 2
-    if value >=30 and value < 45:
+    if value >= 30 and value < 60:
         return 3
-    if value >= 45 and value < 60:
-        return 4
     if value >= 60:
-        return 5
+        return 4
 
 def fare_groups(value):
     if math.isnan(value):
@@ -58,15 +57,6 @@ def fare_groups(value):
     if value >= 100:
         return 3
 
-def embarked_rename(value):
-    if value == "C":
-        return 0
-    if value == "S":
-        return 1
-    if value == "Q":
-        return 2
-    if math.isnan(value):
-        return 1
 
 def cabin_rename(value):
     if value == "Z":
@@ -109,7 +99,7 @@ def data_proc_sex(ser):
 
 def data_proc_cabin(ser):
     tmp = ser.apply(one_lett_cab)
-    tmp = tmp.apply(cabin_rename)
+    #tmp = tmp.apply(cabin_rename)
     return tmp
 
 def data_proc_age(ser):
@@ -120,50 +110,69 @@ def data_proc_fare(ser):
     ser = ser.apply(fare_groups)
     return ser
 
-def data_proc_embarked(ser):
-    ser = ser.apply(embarked_rename)
-    return ser
 
-df_train = pd.read_csv('train.csv')
-df_test = pd.read_csv('test.csv')
+df_train = pd.read_csv('titanic_csv/train.csv')
+df_test = pd.read_csv('titanic_csv/test.csv')
+full = df_train.append(df_test , ignore_index = True )
 
-ser = data_proc_age(df_train["Age"])
-df_train = df_train.drop("Age", axis=1)
-df_train.insert(2, "Age", ser)
-ser = data_proc_fare(df_train["Fare"])
-df_train = df_train.drop("Fare", axis=1)
-df_train.insert(2, "Fare", ser)
-ser = data_proc_cabin(df_train["Cabin"])
-df_train = df_train.drop("Cabin", axis=1)
-df_train.insert(2, "Cabin", ser)
-ser = data_proc_embarked(df_train["Embarked"])
-df_train = df_train.drop("Embarked", axis=1)
-df_train.insert(2, "Embarked", ser)
-ser = data_proc_sex(df_train["Sex"])
-df_train = df_train.drop("Sex", axis=1)
-df_train.insert(2, "Sex", ser)
-
-ser = data_proc_age(df_test["Age"])
-df_test = df_test.drop("Age", axis=1)
-df_test.insert(2, "Age", ser)
-ser = data_proc_fare(df_test["Fare"])
-df_test = df_test.drop("Fare", axis=1)
-df_test.insert(2, "Fare", ser)
-ser = data_proc_cabin(df_test["Cabin"])
-df_test = df_test.drop("Cabin", axis=1)
-df_test.insert(2, "Cabin", ser)
-ser = data_proc_embarked(df_test["Embarked"])
-df_test = df_test.drop("Embarked", axis=1)
-df_test.insert(2, "Embarked", ser)
-ser = data_proc_sex(df_test["Sex"])
-df_test = df_test.drop("Sex", axis=1)
-df_test.insert(2, "Sex", ser)
-
-df_train.to_csv("train_upd.csv", ";")
 series_train = df_train["Survived"]
-df_train = df_train[["Pclass", "Sex", "Age", "SibSp", "Parch", "Fare", "Cabin", "Embarked"]]
-df_train.to_csv("train_upd.csv", ";")
-df_test = df_test[["Pclass", "Sex", "Age", "SibSp", "Parch", "Fare", "Cabin", "Embarked"]]
+#df_train = df_train[["Pclass", "Sex", "Age", "SibSp", "Parch", "Fare", "Cabin"]]
+#df_test = df_test[["Pclass", "Sex", "Age", "SibSp", "Parch", "Fare", "Cabin"]]
+full = full[["Pclass", "Sex", "Age", "SibSp", "Parch", "Fare", "Cabin"]]
+
+# ser = data_proc_age(df_train["Age"])
+# df_train = df_train.drop("Age", axis=1)
+# df_train.insert(2, "Age", ser)
+# ser = data_proc_fare(df_train["Fare"])
+# df_train = df_train.drop("Fare", axis=1)
+# df_train.insert(2, "Fare", ser)
+# ser = data_proc_cabin(df_train["Cabin"])
+# df_train = df_train.drop("Cabin", axis=1)
+# df_train.insert(2, "Cabin", ser)
+# cabin = pd.get_dummies(df_train.Cabin, prefix='Cabin')
+# sex = pd.Series(np.where(df_train.Sex == 'male', 1, 0), name='Sex')
+# df_train = df_train.drop("Cabin", axis=1)
+# df_train = df_train.drop("Sex", axis=1)
+# df_train = pd.concat([df_train, cabin, sex], axis=1)
+#
+# ser = data_proc_age(df_test["Age"])
+# df_test = df_test.drop("Age", axis=1)
+# df_test.insert(2, "Age", ser)
+# ser = data_proc_fare(df_test["Fare"])
+# df_test = df_test.drop("Fare", axis=1)
+# df_test.insert(2, "Fare", ser)
+# ser = data_proc_cabin(df_test["Cabin"])
+# df_test = df_test.drop("Cabin", axis=1)
+# df_test.insert(2, "Cabin", ser)
+# cabin = pd.get_dummies(df_test.Cabin, prefix='Cabin')
+# sex = pd.Series(np.where(df_test.Sex == 'male', 1, 0), name='Sex')
+# df_test = df_test.drop("Cabin", axis=1)
+# df_test = df_test.drop("Sex", axis=1)
+# df_test = pd.concat([df_test, cabin, sex], axis=1)
+
+ser = data_proc_age(full["Age"])
+full = full.drop("Age", axis=1)
+full.insert(2, "Age", ser)
+ser = data_proc_fare(full["Fare"])
+full = full.drop("Fare", axis=1)
+full.insert(2, "Fare", ser)
+ser = data_proc_cabin(df_test["Cabin"])
+full = full.drop("Cabin", axis=1)
+full.insert(2, "Cabin", ser)
+full['Cabin'] = full.Cabin.fillna('C')
+cabin = pd.get_dummies(full.Cabin, prefix='Cabin')
+sex = pd.Series(np.where(full.Sex == 'male', 1, 0), name='Sex')
+full = full.drop("Cabin", axis=1)
+full = full.drop("Sex", axis=1)
+full = pd.concat([full, cabin, sex], axis=1)
+
+
+#df_train.to_csv("titanic_csv/train_upd.csv", ";")
+
+
+model = SVC()
+model.fit(full[0:891], series_train)
+series_test = model.predict(full[891:])
 
 # groups = df_train["Cabin"].groupby(df_train["Cabin"])
 # for name, group in groups:
@@ -175,12 +184,12 @@ df_test = df_test[["Pclass", "Sex", "Age", "SibSp", "Parch", "Fare", "Cabin", "E
 #     print(clf.score(df_train, series_train))
 
 # specify parameters via map
-param = {'max_depth':2, 'eta':1, 'silent':1, 'objective':'binary:logistic' }
-num_round = 2
-model = xgb.XGBClassifier()
-bst = model.fit(df_train, series_train)
-# make prediction
-series_test = bst.predict(df_test)
+# param = {'max_depth':2, 'eta':1, 'silent':1, 'objective':'binary:logistic' }
+# num_round = 2
+# model = xgb.XGBClassifier()
+# bst = model.fit(df_train, series_train)
+# # make prediction
+# series_test = bst.predict(df_test)
 
 
 # clf = RandomForestClassifier()
@@ -200,8 +209,11 @@ series_test = bst.predict(df_test)
 # clf = grid_obj.best_estimator_
 # clf.fit(df_train, series_train)
 # series_test = clf.predict(df_test)
-df_test.insert(2, "Survived", series_test)
-df_test.to_csv("test_upd.csv", ";")
+df = pd.DataFrame()
+df.insert(0, "PassengerId", df_test["PassengerId"])
+df.insert(1, "Survived", series_test)
+df.to_csv("titanic_csv/test_upd.csv", ",", index = False)
+
 #print(clf.score(df_train, series_train))
 
 # print(df_train[['Pclass', 'Survived']].groupby(['Pclass']).mean().sort_values(by='Survived', ascending=False))
@@ -210,5 +222,4 @@ df_test.to_csv("test_upd.csv", ";")
 # print(df_train[['SibSp', 'Survived']].groupby(['SibSp']).mean().sort_values(by='Survived', ascending=False))
 # print(df_train[['Parch', 'Survived']].groupby(['Parch']).mean().sort_values(by='Survived', ascending=False))
 # print(df_train[['Fare', 'Survived']].groupby(['Fare']).mean().sort_values(by='Survived', ascending=False))
-# print(df_train[['Cabin', 'Survived']].groupby(['Cabin']).mean().sort_values(by='Survived', ascending=False))
-# print(df_train[['Embarked', 'Survived']].groupby(['Embarked']).mean().sort_values(by='Survived', ascending=False))
+#print(df_train[['Cabin', 'Survived']].groupby(['Cabin']).mean().sort_values(by='Survived', ascending=False))
